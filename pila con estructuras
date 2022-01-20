@@ -1,0 +1,183 @@
+// main.c 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "funciones.h"
+
+int main()
+{
+
+    struct nodo* tope = NULL;
+    int var;
+    int elemento;
+
+    int seguir = 1;
+
+    while(seguir == 1){
+
+    do{
+    printf("que operacion sobre la pila quiere realizar ? \n");
+    printf(" 1 - apilar\n 2 - desapilar\n 3 - vaciar pila\n 4 - ver tamaño de la pila \n 5 - ver si la pila esta vacia \n 6 - ver el primer elemento de la pila \n 7 - imprimir pila \n");
+    scanf(" %d", &var);
+    }while(var < 1 || var > 8);
+
+    switch(var){
+
+    case 1:
+        printf("ingresa el numero a insertar en la pila \n");
+        scanf(" %d", &elemento);
+        apila(&tope,elemento);
+        break;
+
+    case 2:
+        desapila(&tope);
+        break;
+
+    case 3:
+        vacia_pila(&tope);
+        break;
+
+    case 4:
+        printf("tamaño de la pila : %d \n", tamanio(tope));
+        break;
+
+    case 5:
+        if(esta_vacia(&tope) == 1)
+            printf("la pila esta vacia\n");
+        else
+            printf("la pila se encuentra con elementos,por lo tanto no esta vacia \n");
+            break;
+
+    case 6:
+
+       if (cima_funcion(tope) == -1 ) (printf("la pila no contiene elementos,por lo tanto no posee un elemento en la cima \n"));
+       else
+           printf("cima de la pila : %d \n", cima_funcion(tope));
+       break;
+
+    case 7:
+        imprimir_pila(tope);
+        break;
+    }
+
+    printf("desea ejecutar otra operacion ? \n");
+    scanf(" %d", &seguir);
+    while (seguir > 1 || seguir < 0){
+        printf("numero invalido \n");
+        printf("desea ejecutar otra operacion ? \n");
+        scanf(" %d", &seguir);
+    }
+}
+
+    free(tope);
+
+    return 0;
+}
+
+// funciones.h 
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct nodo{
+
+    int dato;
+    struct nodo* siguiente;
+}nodo;
+
+
+void apila(nodo **tope,int var){
+
+  struct nodo* nuevo_nodo = (struct nodo*)malloc(sizeof(struct nodo));
+  if(nuevo_nodo == NULL){
+    printf("no hay espacio en el sistema \n");
+    return -1;
+  }
+  nuevo_nodo->dato = var;
+  nuevo_nodo->siguiente = *tope;
+  *tope = nuevo_nodo;
+  //printf("dato : %d", nuevo_nodo->dato);
+};
+
+int desapila(nodo** tope){
+
+    if(*tope == NULL){
+        printf("la pila esta vacia \n");
+        return;
+    }
+
+    struct nodo* temporal = *tope;
+    *tope = temporal->siguiente;
+    int valor = temporal->dato;
+    //printf("valor : %d\n", valor);
+    free(temporal);
+    return valor;
+
+};
+
+void vacia_pila(nodo** tope){
+
+    if(*tope == NULL){
+        printf("no se puede vaciar la pila,ya se encuentra vacia\n");
+        return;
+    }
+
+    struct nodo* temporal = *tope;
+
+    while(*tope != NULL){
+
+        free(temporal);
+        *tope = temporal->siguiente;
+        temporal = *tope;
+        printf("se quito un elemento de la pila \n");
+    }
+};
+
+int tamanio(nodo* tope){
+
+    int contador = 0;
+    struct nodo* temporal = tope;
+    if(tope == NULL) return 0;
+    while(temporal != NULL){
+        contador+=1;
+        temporal = temporal->siguiente;
+    }
+    return contador;
+};
+
+int esta_vacia(nodo **tope ){
+
+    int vacia;
+
+    if(*tope == NULL)
+        vacia = 1;
+    else
+        vacia = 0;
+
+    return vacia;
+}
+
+int cima_funcion(nodo* tope){
+
+    if(tope == NULL) return -1;
+
+    return tope->dato;
+};
+
+void imprimir_pila(nodo* tope){
+
+    if(tope == NULL) (printf("no hay elementos para imprimir \n"));
+
+    int i = 1;
+    struct nodo* temporal = tope;
+    while(temporal != NULL){
+
+        printf("elemento %d de la pila : %d \n",i, temporal->dato);
+        temporal = temporal->siguiente;
+        i++;
+    }
+
+
+}
+
+

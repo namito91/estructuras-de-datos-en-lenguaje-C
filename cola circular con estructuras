@@ -1,0 +1,197 @@
+// cola circular con estructuras dinamicas 
+
+// main.c 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "funciones.h"
+
+int main(void) {
+
+	struct nodo* frente,*ultimo;
+	frente = NULL;
+	ultimo = NULL;
+
+	int var;
+	int elemento;
+    int seguir = 1 ;
+
+	while(seguir == 1 ){
+
+	    do{
+	    printf("que operacion sobre la cola circular quiere realizar ? \n");
+	    printf(" 1 - encolar\n 2 - desencolar\n 3 - vaciar cola\n 4 - ver frente de la cola circular \n 5 - imprimir cola circular \n");
+	    scanf(" %d", &var);
+	    }while(var < 1 || var > 5);
+
+	    switch(var){
+
+	    case 1:
+	        printf("ingresa el numero a insertar en la cola \n");
+	        scanf(" %d", &elemento);
+	        encolar (&frente,&ultimo ,elemento);
+	        break;
+
+        case 2:
+	    	printf("se va a eliminar el primer elemento la cola \n");
+	        printf("elemento eliminado : %d \n", desencolar ( &frente, &ultimo ) );
+	    	break;
+
+        case 3:
+            printf("se van a eliminar todos los elementos de la cola circular\n");
+            vaciar_cola(&frente, &ultimo);
+            printf("cola vacia...\n");
+            break;
+
+        case 4:
+            printf("frente de la cola : %d \n", frente_funcion (frente));
+            break;
+	    case 5:
+	    	imprimir_cola(frente);
+	    	break;
+	    }
+
+	    printf("desea ejecutar otra operacion ? 1-0 \n");
+	    scanf(" %d", &seguir);
+	    while ( (seguir > 1 ) || (seguir < 0 ) ){
+	        printf("numero invalido \n");
+	        printf("desea ejecutar otra operacion ? \n");
+	        scanf(" %d", &seguir);
+	    }
+	}
+
+    if (frente != NULL ){
+        free(frente);
+    }
+
+	if (ultimo != NULL ){
+        free(ultimo);
+    }
+
+	return EXIT_SUCCESS;
+} 
+
+
+
+// funciones.h 
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct nodo{
+
+    int dato;
+    struct nodo* siguiente;
+}nodo;
+
+
+int encolar ( nodo** primero,nodo** ultimo, int var )
+{
+    struct nodo* nodo_nuevo = (struct nodo*)malloc(sizeof(struct nodo));
+
+    if(nodo_nuevo == NULL){
+      printf("no hay espacio en el sistema \n");
+      return -1;
+    }
+
+    if (*primero == NULL ){
+
+	    *primero = nodo_nuevo;
+	    (*primero)->siguiente = *primero;
+	    nodo_nuevo->dato = var;
+        *ultimo = *primero;
+	    return;
+    }else{
+
+        (*ultimo)->siguiente = nodo_nuevo;
+        nodo_nuevo->dato = var;
+        nodo_nuevo->siguiente = *primero;
+        *ultimo = nodo_nuevo;
+    }
+};
+
+
+int desencolar ( nodo** primero, nodo** ultimo )
+{
+
+    if ( *primero == NULL )
+    {
+        printf("la cola circular se encuentra vacia \n");
+        return -1;
+    }
+
+    int var = (*primero)->dato;
+
+    *primero = (*primero)->siguiente;
+    (*ultimo)->siguiente = *primero;
+    return var;
+};
+
+
+void vaciar_cola (nodo** primero, nodo** ultimo)
+{
+    if ( *primero == NULL){
+        printf("la cola esta vacia \n");
+        return;
+}
+
+    struct nodo* temporal = *primero;
+    (*ultimo)->siguiente = NULL;
+    //struct nodo* temporal2 = *ultimo;
+
+    //free (temporal2);
+    while (temporal != NULL )
+    {
+
+        *primero = (*primero)->siguiente;
+
+        free(temporal);
+
+        temporal = *primero;
+        printf("se quito un elemento de la cola \n");
+    }
+};
+
+
+int frente_funcion (nodo* primero)
+{
+    int var = primero->dato;
+
+    return var;
+
+}
+
+void imprimir_cola (nodo* frente ){
+
+    if (frente == NULL) {
+    	printf("no hay elementos para imprimir \n");
+    }
+
+    int i = 1;
+    struct nodo* temporal = frente;
+    while(temporal != NULL){
+
+        printf("elemento %d de la cola : %d \n",i, temporal->dato);
+
+        if (temporal->siguiente == frente)
+            break;
+
+        temporal = temporal->siguiente;
+
+        i++;
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+

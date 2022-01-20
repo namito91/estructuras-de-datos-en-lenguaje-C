@@ -1,0 +1,224 @@
+// main.c 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "funciones.h"
+
+int main()
+{
+
+    STRING cadena;
+    arbol *raiz;
+    raiz = NULL;
+    int contador = 1;
+    int opcion;
+
+    while (contador == 1){
+
+        do {
+        printf (" Elegi la opcion a ejecutar : \n 1 - insertar dato \n 2 - ver si es miembro \n 3 - borrar dato mas chico del arbol \n 4 - borrar dato del arbol \n 5 - imprimir arbol \n");
+        scanf("%d", &opcion);
+        } while ( opcion < 1 || opcion > 5 );
+
+
+        switch( opcion ){
+
+	    case 1:
+	        printf("\n ingresa los caracteres a insertar en el arbol \n");
+	        scanf("%s", cadena );
+	        inserta ( &raiz , cadena );
+	        break;
+
+        case 2:
+            printf("\n ingresa la cadena de caracteres para ver si pertenece al arbol \n");
+            scanf("%s", cadena );
+            es_miembro( raiz, cadena );
+            break;
+
+        case 3:
+            printf("\n se va a eliminar el dato mas chico perteneciente al arbol \n");
+            printf ("\n dato eliminado : %s \n", suprime_min(&raiz) );
+            break;
+
+        case 4:
+            printf ("\n ingresa la cadena de caracteres a eliminar \n");
+            scanf ("%s", cadena );
+            es_miembro(raiz,cadena);
+            if (tmp == 1)
+            suprime(&raiz,cadena);
+            else
+            printf ("\n no es posible borrar ese dato \n");
+            break;
+
+
+        case 5:
+            printf ("\n imprimiendo arbol... \n");
+            printf(" arbol en orden horizontal : \n");
+            print2D(&raiz );
+            break;
+        }
+
+        printf (" seguir con el programa ? 1 - si  0 - no \n");
+        scanf (" %d", &contador);
+
+        if (contador == 1) continue;
+        else break;
+    }
+
+    return 0;
+} 
+
+
+// funciones.h 
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define long_max 25;
+#define COUNT 10
+
+typedef char STRING[20];
+
+typedef struct nodo {
+
+    STRING dato;
+    struct nodo *h_izq , *h_der;
+
+}arbol;
+
+int tmp;
+
+void inserta ( arbol **A , STRING x )
+{
+    if (*A == NULL ) {
+
+        *A = ( arbol *) malloc ( sizeof ( arbol ) );
+        strcpy ( (* A ) -> dato , x  );
+        (* A ) -> h_izq = NULL;
+        (* A ) -> h_der = NULL;
+    }
+    else {
+
+    if ( strcmp ( (* A ) -> dato , x ) < 0 )
+        inserta (&((* A ) -> h_izq ) , x );
+
+    else if ( strcmp ( (* A ) -> dato , x ) > 0 )
+        inserta (&((* A ) -> h_der ) , x );
+}
+}
+
+
+void es_miembro ( arbol *A , STRING x ) {
+
+    if ( A == NULL ) {
+        printf("\n *el dato ingresado : %s , NO PERTENECE al arbol \n", x);
+        tmp = 0;
+    }
+
+    else if ( strcmp ( A -> dato , x ) == 0 ) {
+        printf("\n *el dato ingresado : %s ,  PERTENECE al arbol \n", x);
+        tmp = 1;
+    }
+
+    else if ( strcmp( A -> dato , x ) < 0  )
+        return es_miembro (A -> h_izq , x );
+
+    else if ( strcmp( A -> dato,x ) > 0  )
+        return es_miembro (A -> h_der , x );
+}
+
+
+char* suprime_min ( arbol **A )
+{
+    //char copia [51];
+    STRING *v_ref;
+    v_ref = (STRING*)malloc(strlen( (*A)->dato )+1);
+
+    if ((* A ) -> h_izq == NULL ) {
+
+        strcpy ( *v_ref,(* A ) -> dato );
+        arbol * tmp = * A;
+        * A = (* A ) -> h_der;
+        free ( tmp );
+
+    return *v_ref;
+
+  } else {
+
+  return suprime_min (&((* A ) -> h_izq ) );
+}
+}
+
+
+void suprime ( arbol ** A , STRING x ) {
+
+    if (*A != NULL ) {
+
+    if ( strcmp ( (*A) -> dato , x ) < 0 )
+
+        suprime ( &((*A) -> h_izq ) , x );
+
+    else if ( strcmp ( (*A) -> dato , x ) > 0 )
+
+        suprime ( &((*A) -> h_der ) , x );
+
+    // Lo encontre
+    else if ( (*A) -> h_izq == NULL && (* A ) -> h_der == NULL ) {
+
+        arbol *tmp = *A;
+        *A = NULL;
+        free ( tmp );
+
+  } else if ( (* A ) -> h_izq == NULL ) {
+
+        arbol *tmp = *A;
+        *A = (*A) -> h_der;
+        free ( tmp );
+
+  } else if ( (* A ) -> h_der == NULL ) {
+
+        arbol *tmp = *A;
+        *A = (* A ) -> h_izq;
+        free ( tmp );
+
+  }
+  }  else { // ambos hijos estan presentes
+
+      strcpy ( (* A ) -> dato , suprime_min ( &((* A ) -> h_der ) ));
+}
+}
+
+
+
+void print2DUtil(arbol **root, int space)
+{
+    // Base case
+    if ( *root == NULL){
+       // printf ("\n el arbol esta vacio...nada para imprimir \n");
+        return;
+    }
+    // Increase distance between levels
+    space += COUNT;
+
+    // Process right child first
+    print2DUtil( &(*root)->h_der, space);
+
+    // Print current node after space
+    // count
+    printf("\n");
+    for (int i = COUNT; i < space; i++)
+        printf(" ");
+    printf("%s\n", (*root)->dato );
+
+    // Process left child
+    print2DUtil( &(*root)->h_izq, space);
+}
+
+
+void print2D(arbol **root)
+{
+   // Pass initial space count as 0
+   print2DUtil(&(*root), 0);
+}
+

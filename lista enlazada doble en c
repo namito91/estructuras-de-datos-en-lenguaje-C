@@ -1,0 +1,257 @@
+// LISTA ENLAZADA DOBLE EN C 
+
+// main.c 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "funciones.h"
+
+int main(void) {
+
+	struct nodo *primero;
+	primero = NULL;
+
+	int var;
+	int elemento;
+    int seguir = 1;
+   // int dato;
+
+	while( seguir == 1 ){
+
+	    do{
+	    printf("que operacion sobre la lista quiere realizar ? \n");
+	    printf(" 1 - insertar \n 2 - listar \n 3 - listar en reversa \n 4 - eliminar nodo \n 5 - buscar ultimo nodo de la lista doble \n 6 - limpiar memoria Heap \n");
+	    scanf(" %d", &var);
+	    }while(var < 1 || var > 6);
+
+	    switch(var){
+
+	    case 1:
+	        printf("ingresa el numero a insertar en la lista \n");
+	        scanf(" %d", &elemento);
+	        insertar ( elemento ,&primero );
+	        break;
+
+        case 2:
+	    	printf("listando elementos... \n");
+            listar ( primero );
+            break;
+
+        case 3:
+	    	printf("listando elementos en reversa... \n");
+           // printf("lista en orden inverso \n");
+            listar_en_reversa ( ultimo );
+            break;
+
+        case 4:
+            printf("elegi que elemento eliminar de la lista \n");
+	        scanf(" %d", &elemento);
+	        printf("elemento eliminado : %d \n", eliminar ( elemento , &primero ) );
+	    	break;
+
+        case 5:
+            printf("buscando ultimo nodo de la lista... \n");
+            ultimo_elemento (  );
+            //printf("ultimo nodo de la lista %d \n",  ultimo->dato );
+            break;
+
+        case 6:
+            printf("limpiando memoria Heap ... \n");
+            limpiar_memoria(&primero);
+            printf("memoria liberada...\n");
+            break;
+	    }
+
+	    printf("desea ejecutar otra operacion ? 1-0 \n");
+	    scanf(" %d", &seguir);
+	    while ( (seguir > 1 ) || (seguir < 0 ) ){
+	        printf("numero invalido \n");
+	        printf("desea ejecutar otra operacion ? \n");
+	        scanf(" %d", &seguir);
+	    }
+	}
+
+
+	return EXIT_SUCCESS;
+}
+
+
+// funciones.h 
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int contador = 1;
+
+typedef struct nodo {
+
+    int dato;
+    struct nodo *sgte;
+    struct nodo *antr;
+} lista;
+
+lista *primer_nodo = NULL;
+lista *ultimo = NULL;
+
+void insertar ( int d , lista **nodo ) {
+
+    if (*nodo == NULL ) {
+
+        printf ( " Insertando %d en la lista \n " , d );
+        lista *nuevo_nodo = ( lista *) malloc ( sizeof ( lista ) );
+        nuevo_nodo -> dato = d;
+        //nuevo_nodo -> sgte = NULL;
+
+        if ( contador > 1 ){
+
+            (ultimo)->sgte = nuevo_nodo;
+            nuevo_nodo -> antr = ultimo;
+            nuevo_nodo -> sgte = NULL;
+        }
+        else {
+
+            nuevo_nodo -> antr = NULL;
+            nuevo_nodo -> sgte = NULL;
+
+            *nodo = nuevo_nodo;
+        }
+
+        ultimo = nuevo_nodo;
+
+        contador++;
+    }
+
+     else {
+
+    //   NULL <- 1 (tope) -> <- 2 -> NULL         nuevo : 2
+
+     if ( (*nodo) -> dato > d ) { // cuando va al inicio y solo hay un nodo en la lista
+
+            printf ( " Insertando %d en la lista \n " , d );
+            lista *nuevo_nodo = ( lista *) malloc ( sizeof ( lista ) );
+            nuevo_nodo -> dato = d;
+            nuevo_nodo -> sgte = *nodo;
+            nuevo_nodo -> antr = NULL;
+            //(*nodo)->sgte = NULL;
+            (*nodo)->antr = nuevo_nodo;
+            *nodo = nuevo_nodo;
+            primer_nodo = nuevo_nodo;
+
+            printf("primer nodo %d \n", (primer_nodo)->dato );
+            printf("ultimo nodo %d \n", (ultimo)->dato );
+
+        }else if ( (*nodo)->dato < d && (*nodo)->sgte != NULL && (*nodo)->sgte-> dato > d )
+        { // cuando esta entre dos
+
+            //   NULL <- 1 (tope) -> <- 1.5 -> <- 2 -> NULL         nuevo : 1.5
+
+            printf ( " Insertando %d en la lista \n " , d );
+            lista *nuevo_nodo = ( lista *) malloc ( sizeof ( lista ) );
+            nuevo_nodo -> dato = d;
+            nuevo_nodo -> sgte = (*nodo)->sgte;
+            (*nodo)->sgte->antr = nuevo_nodo;
+            nuevo_nodo -> antr = *nodo;
+            (*nodo) ->sgte = nuevo_nodo;
+
+           // (*nodo) ->sgte->sgte->sgte = NULL;   // REVISAR ESTOOOO
+
+        }else if ((*nodo) -> dato == d ){
+
+            printf ( " Ya existe el elemento %d en la lista,ingresa otro valor... \n " ,d);
+
+
+   } else{
+       // primer_nodo = *nodo;
+        insertar (d , &(* nodo ) -> sgte ) ;
+   }
+}
+}
+
+
+void listar ( lista* i ) {
+
+    if ( i != NULL ) {
+        printf ( " elemento := %d \n " , i-> dato );
+        listar (i -> sgte );
+
+}
+}
+
+
+void listar_en_reversa ( lista *ultimo ) {
+
+    if ( ultimo != NULL ) {
+        printf ( " elemento := %d \n " , ultimo -> dato );
+        listar_en_reversa (ultimo -> antr );
+}
+
+};
+
+
+void ultimo_elemento (  ) {
+
+    printf("ultimo nodo de la lista : %d \n", ultimo->dato );
+}
+
+
+int eliminar ( int d , lista** i ) {
+
+    if (* i == NULL )
+        printf ( " No existe el elemento a eliminar \n " );
+    else {
+
+    if ((* i ) -> dato == d ) { // elimino al primero
+
+        printf ( " Elimino a %d \n " , d );
+        lista* aux = (* i );
+        (* i ) = (* i ) -> sgte;
+        free ( aux );
+
+    } else if ((* i ) -> dato < d && (* i ) -> sgte != NULL && (* i )-> sgte -> dato == d )
+    {
+        // elimino al siguiente
+            printf ( " Elimino a %d \n " , d );
+            lista* aux = (*i) -> sgte;
+            (*i)-> sgte = (*i) -> sgte -> sgte;
+            free ( aux );
+    }
+    else
+        eliminar ( d , &(*i)-> sgte );
+}
+
+    return d;
+};
+
+
+void limpiar_memoria ( lista **i ){
+
+        if(*i == NULL){
+        printf("no se puede limpiar la memoria ,ya se encuentra vacia \n");
+        return;
+    }
+
+    lista* temporal = *i;
+
+    while (temporal != NULL){
+
+        *i = (*i)->sgte;
+        free(temporal);
+
+        temporal = *i;
+        printf("se quito un elemento de la lista doble \n");
+    }
+
+     if ( *i != NULL ){
+        free( *i );
+
+    }
+
+     if ( ultimo != NULL ){
+        free( ultimo );
+    }
+
+};
+
+
+
+

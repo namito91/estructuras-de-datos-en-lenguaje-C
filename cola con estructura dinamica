@@ -1,0 +1,234 @@
+// main.c 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "funciones.h"
+
+int main(void) {
+
+	struct nodo* frente,*ultimo;
+	frente = NULL;
+	ultimo = NULL;
+
+	int var;
+	int elemento;
+    int seguir = 1 ;
+
+	while(seguir == 1 ){
+
+	    do{
+	    printf("que operacion sobre la pila quiere realizar ? \n");
+	    printf(" 1 - encolar\n 2 - desencolar\n 3 - vaciar cola\n 4 - ver tamaño de la cola \n 5 - ver si la cola esta vacia \n 6 - ver el primer elemento de la cola \n 7 - imprimir cola \n");
+	    scanf(" %d", &var);
+	    }while(var < 1 || var > 8);
+
+	    switch(var){
+
+	    case 1:
+	        printf("ingresa el numero a insertar en la cola \n");
+	        scanf(" %d", &elemento);
+	        encola (&frente,&ultimo ,elemento);
+	        break;
+
+        case 2:
+	    	printf("se va a eliminar el ultimo elemento la cola \n");
+	        printf("elemento eliminado : %d \n", desencola ( &frente, &ultimo ) );
+	    	break;
+
+        case 3:
+            printf("se van a eliminar todos los elementos de la cola \n");
+            vacia_cola(&frente);
+            printf("pila vacia...\n");
+            break;
+
+        case 4:
+            printf("numero de elementos en la cola : %d \n", tamanio(frente) );
+            break;
+
+        case 5:
+
+            if ( esta_vacia(&frente) == 1 ){
+                printf("la cola esta vacia \n");
+            }else{
+                printf("la cola no se encuentra vacia \n");
+            }
+            break;
+
+        case 6:
+            printf("frente de la cola : %d \n", frente_funcion(frente));
+            break;
+	    case 7:
+
+	    	imprimir_cola(frente);
+	    	break;
+	    }
+
+	    printf("desea ejecutar otra operacion ? 1-0 \n");
+	    scanf(" %d", &seguir);
+	    while ( (seguir > 1 ) || (seguir < 0 ) ){
+	        printf("numero invalido \n");
+	        printf("desea ejecutar otra operacion ? \n");
+	        scanf(" %d", &seguir);
+	    }
+	}
+
+    if (frente != NULL ){
+        free(frente);
+    }
+
+	if (ultimo != NULL ){
+        free(ultimo);
+    }
+
+	return EXIT_SUCCESS;
+}
+
+
+
+// funciones.h 
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct nodo{
+
+    int dato;
+    struct nodo* siguiente;
+}nodo;
+
+void encola (nodo **frente,nodo **ultimo,int var ){
+
+  struct nodo* nodo_nuevo = (struct nodo*)malloc(sizeof(struct nodo));
+  //struct nodo* nodo_anterior = (struct nodo*)malloc(sizeof(struct nodo));
+
+  if(nodo_nuevo == NULL){
+    printf("no hay espacio en el sistema \n");
+    return;
+  }
+
+  if (*frente == NULL && *ultimo == NULL ){
+	  *frente = nodo_nuevo;
+	  *ultimo = nodo_nuevo;
+	  (*frente)->siguiente = NULL;
+	  nodo_nuevo->dato = var;
+
+	  return;
+  }
+
+  //(*ultimo)->siguiente = nodo_nuevo;
+  nodo_nuevo->dato = var;
+  nodo_nuevo->siguiente = NULL;
+  (*ultimo)->siguiente = nodo_nuevo;
+  *ultimo = nodo_nuevo;
+
+  //printf("dato : %d", nuevo_nodo->dato);
+};
+
+int desencola ( nodo** comienzo , nodo** ultimo ) {
+
+	if ( *comienzo == NULL || *ultimo == NULL ){
+		printf("la cola se encuentra vacia,no hay elementos que eliminar...\n");
+		return -1;
+	}
+
+	struct nodo* temporal = *comienzo ;
+	struct nodo* temporal2 = *comienzo;
+
+	int var1 = (*ultimo)->dato;
+    int temporal3 = 0;
+
+    while ( temporal != NULL ){
+        if ( temporal->siguiente == NULL ){
+
+            *ultimo = temporal2;
+            (*ultimo)->siguiente = NULL;
+            printf("valor del nuevo ultimo elemento %d\n", (*ultimo)->dato );
+            break;
+        }
+
+        temporal = temporal->siguiente;
+
+            if (temporal3 % 2 == 0){
+                temporal2 = temporal2->siguiente;
+            }
+        temporal3++;
+    }
+
+	return var1;
+};
+
+void vacia_cola ( nodo** comienzo ){
+
+    if (*comienzo == NULL){
+        printf("la cola se encuentra vacia \n");
+        return;
+    }
+
+    struct nodo* temporal = *comienzo;
+
+    while (temporal != NULL ){
+
+
+        *comienzo = (*comienzo)->siguiente;
+        free(temporal);
+
+        temporal = *comienzo;
+        printf("se quito un elemento de la pila \n");
+    }
+    };
+
+int tamanio (nodo* frente ){
+
+    if (frente == NULL){
+        printf("la cola ya se encuentra vacia \n");
+    }
+
+    int contador = 0;
+    nodo* temporal = frente;
+    while (temporal != NULL ){
+
+        temporal = temporal->siguiente;
+        contador+= 1;
+    }
+
+    return contador;
+}
+
+int esta_vacia ( nodo** comienzo ){
+
+    if ( *comienzo == NULL ){
+
+        return 1;
+    }else{
+        return 0;
+    }
+};
+
+int frente_funcion (nodo* comienzo ){
+
+    if ( comienzo == NULL)
+        return -1;
+
+    return comienzo->dato;
+};
+
+
+
+void imprimir_cola (nodo* frente ){
+
+    if (frente == NULL) {
+    	printf("no hay elementos para imprimir \n");
+    }
+
+    int i = 1;
+    struct nodo* temporal = frente;
+    while(temporal != NULL){
+
+        printf("elemento %d de la cola : %d \n",i, temporal->dato);
+        temporal = temporal->siguiente;
+        i++;
+    }
+};
+
+

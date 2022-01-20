@@ -1,0 +1,117 @@
+// MAIN.C
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define TAM 10
+#include "funciones.h"
+
+int main()
+{
+
+    int arreglo[TAM];
+    int i = 0;
+
+    // APILA
+    while (i < 15 ){
+        apila(arreglo);
+        i++;
+    }
+
+    for(int i = 0; i < TAM ; i++ )
+    printf("arreglo : %d \n", arreglo[i]);
+
+    //CIMA
+
+    printf("elemtento en tope de la pila : %d \n",cima_funcion(arreglo) );
+
+    //PRIMER ELEMENTO
+    int primer_elemento = desapila(arreglo);
+    printf("primer elemento %d borrado \n", primer_elemento);
+    for(int i = 0; i <= cima ; i++ )
+    printf("arreglo : %d \n", arreglo[i]);
+
+    //VACIA PILA
+    vacia_pila(arreglo);
+
+    //TAMAÑO DE LA PILA
+    printf("tamaño de la pila %d \n", tamanio(arreglo));
+
+    //PILA VACIA ?
+    int contador = esta_vacia(arreglo);
+    printf("elementos en la pila : %d \n", contador+1);
+    if(contador == -1) printf("la pila esta vacia \n");
+
+    return 0;
+}
+
+// FUNCIONES.H 
+
+#include <stdio.h>
+#include <stdlib.h>
+#define TAM 10
+#include <time.h>
+
+int cima = -1;
+
+void apila(int* arreglo){
+
+    static int bandera = 0;
+    if(bandera == 0){
+    srand(time(NULL));
+    bandera++;
+    }
+
+    if ( cima == TAM-1){
+        printf("no caben mas de %d elementos en la pila,usted quiso cargar mas de %d elementos \n", TAM,cima+1  );
+        return -1;
+    }else{
+        cima = cima + 1;
+        //printf("cima pila%d \n",cima);
+        arreglo[cima] = 1 + rand() % 10 ;
+    }
+};
+
+int desapila(int* arreglo){
+
+    if(cima <= 0){
+        printf("la pila esta vacia \n");
+        return -1;
+    }
+   // printf("cima %d \n",cima);
+    cima = cima - 1;
+   // printf("cima %d \n",cima);
+   // printf("elemento en la cima %d \n", arreglo[cima+1] );
+    return arreglo[cima+1];
+};
+
+void vacia_pila(int* arreglo){
+    printf("se van a eliminar todos los elementos de la pila \n");
+    cima = -1;
+
+    printf("se imprimen los elementos de la pila vacia \n");
+    for(int i = 0; i < cima ; i++ )
+    printf("elemento %d del arreglo : %d \n",i, arreglo[i]);
+};
+
+int tamanio(int* arreglo){
+
+    return cima+1;
+};
+
+int esta_vacia(int* arreglo ){
+    if(cima == -1){
+        return cima;
+    }else{
+        printf("la pila no se encuentra vacia\n");
+    }
+
+};
+
+int cima_funcion(int* arreglo ){
+
+    return arreglo[cima];
+
+};
+
+
